@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 
-class BigText extends StatelessWidget {
+class DescText extends StatelessWidget {
   Color? color;
   final String text;
   double size;
   TextOverflow overFlow;
-  BigText({Key? key, this.color = const Color(0xFF2F2F2F),
+  DescText({Key? key, this.color = const Color(0xFF969696),
     required this.text,
-    this.size=20,
+    this.size=13,
     this.overFlow=TextOverflow.ellipsis
   }) : super(key: key);
 
@@ -15,13 +15,12 @@ class BigText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      maxLines: 1,
       overflow: overFlow,
       style: TextStyle(
-        fontFamily: "Nunito",
+        fontFamily: "Lato",
         color: color,
-        fontWeight: FontWeight.w700,
         fontSize: size,
+        fontWeight: FontWeight.w500,
       ),
     );
   }

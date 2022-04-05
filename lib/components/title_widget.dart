@@ -1,25 +1,27 @@
 import 'package:flutter/cupertino.dart';
 
-class SmallText extends StatelessWidget {
+class TitleText extends StatelessWidget {
   Color? color;
   final String text;
   double size;
-  // double height;
-  SmallText({Key? key, this.color = const Color(0xFF2F2F2F),
+  TextOverflow overFlow;
+  TitleText({Key? key, this.color = const Color(0xFF2F2F2F),
     required this.text,
-    this.size=10,
-    // this.overFlow=TextOverflow.ellipsis
+    this.size=20,
+    this.overFlow=TextOverflow.ellipsis
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
+      maxLines: 1,
+      overflow: overFlow,
       style: TextStyle(
-        fontFamily: "Lato",
+        fontFamily: "Nunito",
         color: color,
+        fontWeight: FontWeight.w700,
         fontSize: size,
-        fontWeight: FontWeight.w500,
       ),
     );
   }

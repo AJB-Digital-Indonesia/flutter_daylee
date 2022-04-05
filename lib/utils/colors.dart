@@ -11,6 +11,8 @@ class AppColors{
   static const Color iconColor2 = Color(0xFFB8B8B8);
   static const Color fieldBackgroundColor = Color(0xFFf0f0f0);
   static const Color hintTextColor = Color(0xFF989898);
+  static const Color successBackgroundColor = Color(0xFFC5FFD8);
+  static const Color failedBackgroundColor = Color(0xFFFFC5C5);
   static const Color paraColor = Color(0xFF8f837f);
   static const Color buttonBackgroundColor= Color(0xFFf7f6f4);
   static const Color signColor = Color(0xFFa9a29f);
