@@ -1,26 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_daylee/components/cardtitle_text.dart';
-import 'package:flutter_daylee/components/title_widget.dart';
-import 'package:flutter_daylee/components/emoji_icon.dart';
-import 'package:flutter_daylee/home/components/desc_text.dart';
-import 'package:flutter_daylee/home/components/status_widget.dart';
+import 'package:flutter_daylee/widgets/cardtitle_text.dart';
+import 'package:flutter_daylee/widgets/title_widget.dart';
+import 'package:flutter_daylee/widgets/emoji_icon.dart';
+import 'package:flutter_daylee/widgets/bottom_navbar.dart';
+import 'package:flutter_daylee/screens/home/widgets/desc_text.dart';
+import 'package:flutter_daylee/screens/home/widgets/status_widget.dart';
+import 'package:flutter_daylee/screens/services/services.dart';
 import 'package:flutter_daylee/utils/colors.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../components/nav_bar.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: HomeBody(),
       bottomNavigationBar: BottomNavBar(),
     );
@@ -37,12 +39,12 @@ class HomeBody extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          Header(),
+          const Header(),
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Column(
-                children: [
+                children: const [
                   MainMenuSection(),
                   PromoSection(),
                   ServiceStatusSection(),
@@ -108,7 +110,7 @@ class Header extends StatelessWidget {
                       margin: EdgeInsets.only(right: 4),
                       child: EmojiIcon(emoji: "🔍", size: 18,)
                   ),
-                  Expanded(
+                  const Expanded(
                       child: TextField(
                         textAlignVertical: TextAlignVertical.center,
                         style: TextStyle(
@@ -155,19 +157,19 @@ class MainMenuSection extends StatelessWidget {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              MenuCard(emoji: "👕", text: "Laundry"),
-              MenuCard(emoji: "💧", text: "Air Galon"),
-              MenuCard(emoji: "🧹", text: "Bersih-bersih"),
+            children: const <Widget>[
+              ServiceMenuCard(emoji: "👕", text: "Laundry"),
+              ServiceMenuCard(emoji: "💧", text: "Air Galon"),
+              ServiceMenuCard(emoji: "🧹", text: "Bersih-bersih"),
             ],
           ),
           SizedBox(height: 8,),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              MenuCard(emoji: "📄", text: "Fotokopi"),
-              MenuCard(emoji: "📦", text: "Pindahan"),
-              MenuCard(emoji: "⚒", text: "Lainnya"),
+            children: const <Widget>[
+              ServiceMenuCard(emoji: "📄", text: "Fotokopi"),
+              ServiceMenuCard(emoji: "📦", text: "Pindahan"),
+              ServiceMenuCard(emoji: "⚒", text: "Lainnya"),
             ],
           ),
         ],
@@ -255,40 +257,70 @@ class ServiceStatusSection extends StatelessWidget {
 }
 
 
-class MenuCard extends StatelessWidget {
+class ServiceMenuCard extends StatelessWidget {
   final String emoji;
   final String text;
-  double emojiSize;
-  double textSize;
-  MenuCard({Key? key,
+  final double emojiSize;
+  final double textSize;
+  final Function()? press;
+  const ServiceMenuCard({Key? key,
     required this.emoji,
     required this.text,
     this.emojiSize=25,
     this.textSize=14,
+    this.press,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 94,
-      height: 80,
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
+    return Material(
+      child: InkWell(
         borderRadius: BorderRadius.circular(8),
-        color: AppColors.fieldBackgroundColor,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            child: EmojiIcon(emoji: emoji, size: emojiSize,),
+        onTap: () {
+          Navigator.of(context).push(_createRoute());
+        },
+        child: Ink(
+          width: 94,
+          height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(8),
+            color: AppColors.fieldBackgroundColor,
           ),
-          Container(
-            margin: EdgeInsets.only(top: 8),
-            child: CardTitleText(text: text,),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                child: EmojiIcon(emoji: emoji, size: emojiSize,),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 8),
+                child: CardTitleText(text: text,),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
+    );
+  }
+  Route _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => ServiceScreen(service: text+" "+emoji),
+      // transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+      transitionDuration: Duration(milliseconds: 500),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.easeInOut;
+
+        var tween = Tween(begin: begin, end: end).chain(
+            CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
     );
   }
 }

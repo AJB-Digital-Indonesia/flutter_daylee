@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_daylee/home/home_page.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_daylee/screens/home/home_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+
+    statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+    statusBarBrightness: Brightness.light, // For iOS (dark icons)
+  ));
+  runApp(const DayleeApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class DayleeApp extends StatelessWidget {
+  const DayleeApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -17,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: const HomeScreen(),
     );
   }
 }
