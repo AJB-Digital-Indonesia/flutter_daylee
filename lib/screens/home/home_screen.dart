@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_daylee/widgets/cardtitle_text.dart';
+import 'package:flutter_daylee/widgets/search_field.dart';
 import 'package:flutter_daylee/widgets/title_widget.dart';
 import 'package:flutter_daylee/widgets/emoji_icon.dart';
 import 'package:flutter_daylee/widgets/bottom_navbar.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_daylee/screens/home/widgets/desc_text.dart';
 import 'package:flutter_daylee/screens/home/widgets/status_widget.dart';
 import 'package:flutter_daylee/screens/services/services.dart';
 import 'package:flutter_daylee/utils/colors.dart';
-
+import 'package:flutter_daylee/model.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 
@@ -22,27 +23,74 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: HomeBody(),
-      bottomNavigationBar: BottomNavBar(),
+      bottomNavigationBar: BottomNavBar(initialSelectedScreenNum: 0,),
     );
   }
 }
 
-class HomeBody extends StatelessWidget {
+class HomeBody extends StatefulWidget {
   const HomeBody({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 36),
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
+  _HomeBodyState createState() => _HomeBodyState();
+}
+
+class _HomeBodyState extends State<HomeBody> {
+  SliverAppBar showSliverAppBar() {
+    return SliverAppBar(
+      backgroundColor: AppColors.mainColor,
+      pinned: true,
+      snap: false,
+      floating: true,
+      elevation: 2,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Header(),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
+          Column(
+              children: [
+                TitleText(text: "Halo, Yuki 👋", size: 20,)
+              ]
+          ),
+          SizedBox(
+            width: 34,
+            height: 34,
+            child: TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  backgroundColor: AppColors.mainColor2,
+                  shape: CircleBorder(),
+                ),
+                child: SvgPicture.asset("assets/icons/notif.svg")
+            ),
+          )
+        ],
+      ),
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(46.0),
+        child: Container(
+          padding: const EdgeInsets.only(left: 18, right: 18, bottom: 6, top: 6),
+          child: (
+            const SearchField(hintText: "Cari layanan sesuai kebutuhanmu!",)
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: <Widget>[
+        showSliverAppBar(),
+        SliverList(
+          delegate: SliverChildListDelegate([
+            Container(
+              decoration: const BoxDecoration(
+                color: AppColors.mainColor,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 18),
               child: Column(
                 children: const [
                   MainMenuSection(),
@@ -51,89 +99,9 @@ class HomeBody extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Header extends StatelessWidget {
-  const Header({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(bottom: 6),
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        children: [
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                    children: [
-                      TitleText(text: "Halo, Yuki 👋", size: 20,)
-                    ]
-                ),
-                Container(
-                  width: 34,
-                  height: 34,
-                  child: TextButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                      backgroundColor: AppColors.mainColor2,
-                      shape: CircleBorder(),
-                    ),
-                    child: SvgPicture.asset("assets/icons/notif.svg")
-                  ),
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: 10,),
-          Center(
-            child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(horizontal: 7),
-              width: MediaQuery.of(context).size.width,
-              height: 34,
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(8),
-                color: AppColors.fieldBackgroundColor,
-              ),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                      margin: EdgeInsets.only(right: 4),
-                      child: EmojiIcon(emoji: "🔍", size: 18,)
-                  ),
-                  const Expanded(
-                      child: TextField(
-                        textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(
-                            fontFamily: "Lato",
-                            fontSize: 15
-                        ),
-                        decoration: InputDecoration(
-                          hintText: "Cari layanan sesuai kebutuhanmu!",
-                          hintStyle: TextStyle(
-                            fontFamily: "Lato",
-                            color: AppColors.hintTextColor,
-                          ),
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                        ),
-                      )
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+          ]),
+        ),
+      ],
     );
   }
 }
@@ -158,18 +126,18 @@ class MainMenuSection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const <Widget>[
-              ServiceMenuCard(emoji: "👕", text: "Laundry"),
-              ServiceMenuCard(emoji: "💧", text: "Air Galon"),
-              ServiceMenuCard(emoji: "🧹", text: "Bersih-bersih"),
+              ServiceMenuCard(emoji: "👕", text: "Laundry", type: "Laundry",),
+              ServiceMenuCard(emoji: "💧", text: "Air Galon", type: "Galon",),
+              ServiceMenuCard(emoji: "🧹", text: "Bersih-bersih", type: "Bersih-bersih",),
             ],
           ),
           SizedBox(height: 8,),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const <Widget>[
-              ServiceMenuCard(emoji: "📄", text: "Fotokopi"),
-              ServiceMenuCard(emoji: "📦", text: "Pindahan"),
-              ServiceMenuCard(emoji: "⚒", text: "Lainnya"),
+              ServiceMenuCard(emoji: "📄", text: "Fotokopi", type: "Fotokopi",),
+              ServiceMenuCard(emoji: "📦", text: "Pindahan", type: "Pindahan",),
+              ServiceMenuCard(emoji: "⚒", text: "Lainnya", type: "Lainnya",),
             ],
           ),
         ],
@@ -222,34 +190,29 @@ class ServiceStatusSection extends StatelessWidget {
               ),
             ],
           ),
-          ServiceStatusCard(
-            emoji: "👕",
-            provider: "Laundry Orange Cisitu Lama",
-            status: true,
-            statusText: "Diproses",
-            description: "Perkiraan waktu antar 27/03 19:00",
-          ),
-          ServiceStatusCard(
-            emoji: "💧",
-            provider: "Galon Bang Lorem",
-            status: false,
-            statusText: "Dibatalkan Penjual",
-            description: "Toko Tutup",
-          ),
-          ServiceStatusCard(
-            emoji: "💧",
-            provider: "Galon Bang Lorem",
-            status: false,
-            statusText: "Dibatalkan Penjual",
-            description: "Toko Tutup",
-          ),
-          ServiceStatusCard(
-            emoji: "💧",
-            provider: "Galon Bang Lorem",
-            status: false,
-            statusText: "Dibatalkan Penjual",
-            description: "Toko Tutup",
-          ),
+          Column(
+            children: Provider.of<Transcation>(context).transactions.map((item){
+              String emojiStoreType = "⚒";
+              if (item.type=="Galon") {
+                emojiStoreType = "💧";
+              } else if (item.type=="Laundry") {
+                emojiStoreType = "👕";
+              } else if (item.type=="Bersih-bersih") {
+                emojiStoreType = "🧹";
+              }  else if (item.type=="Fotokopi") {
+                emojiStoreType = "📄";
+              } else if (item.type=="Pindahan") {
+                emojiStoreType = "📦";
+              }
+              return ServiceStatusCard(
+                emoji: emojiStoreType,
+                provider: item.storeName,
+                status: item.isValid,
+                statusText: item.status,
+                description: item.statusDescription,
+              );
+            }).toList(),
+          )
         ],
       ),
     );
@@ -260,12 +223,14 @@ class ServiceStatusSection extends StatelessWidget {
 class ServiceMenuCard extends StatelessWidget {
   final String emoji;
   final String text;
+  final String type;
   final double emojiSize;
   final double textSize;
   final Function()? press;
   const ServiceMenuCard({Key? key,
     required this.emoji,
     required this.text,
+    required this.type,
     this.emojiSize=25,
     this.textSize=14,
     this.press,
@@ -275,6 +240,7 @@ class ServiceMenuCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       child: InkWell(
+        splashFactory: InkRipple.splashFactory,
         borderRadius: BorderRadius.circular(8),
         onTap: () {
           Navigator.of(context).push(_createRoute());
@@ -294,7 +260,7 @@ class ServiceMenuCard extends StatelessWidget {
                 child: EmojiIcon(emoji: emoji, size: emojiSize,),
               ),
               Container(
-                margin: EdgeInsets.only(top: 8),
+                margin: const EdgeInsets.only(top: 8),
                 child: CardTitleText(text: text,),
               ),
             ],
@@ -305,9 +271,13 @@ class ServiceMenuCard extends StatelessWidget {
   }
   Route _createRoute() {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => ServiceScreen(service: text+" "+emoji),
+      pageBuilder: (context, animation, secondaryAnimation) => ServiceScreen(
+        service: text+" "+emoji,
+        type: type,
+        filteredStoreByType: Provider.of<Stores>(context).stores.where((element) => element.type==type).toList(),
+      ),
       // transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
-      transitionDuration: Duration(milliseconds: 500),
+      transitionDuration: const Duration(milliseconds: 500),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(1.0, 0.0);
         const end = Offset.zero;

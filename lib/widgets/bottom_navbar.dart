@@ -3,7 +3,11 @@ import 'package:flutter_daylee/utils/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({Key? key}) : super(key: key);
+  int initialSelectedScreenNum;
+  BottomNavBar({
+    Key? key,
+    this.initialSelectedScreenNum = 0,
+  }) : super(key: key);
 
   @override
   _BottomNavBarState createState() => _BottomNavBarState();
@@ -12,10 +16,29 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialSelectedScreenNum;
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    _navigateToScreen(index);
+  }
+
+  void _navigateToScreen(int index) {
+    if (index==0) {
+      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+    } else if (index==1) {
+      Navigator.pushNamedAndRemoveUntil(context, '/transaction', (route) => false);
+    } else if (index==2) {
+      Navigator.pushNamedAndRemoveUntil(context, '/promo', (route) => false);
+    } else if (index==3) {
+      Navigator.pushNamedAndRemoveUntil(context, '/profile', (route) => false);
+    }
   }
 
   @override
